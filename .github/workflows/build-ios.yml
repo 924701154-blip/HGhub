@@ -1,9 +1,6 @@
-name: Build HGhub iOS v1.2.0
+name: Build HGhub iOS
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - 'v1.2.0'
 
 jobs:
   build:
@@ -11,39 +8,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: v1.2.0
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
-
       - name: Install pnpm
         run: npm install -g pnpm
-
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: aarch64-apple-ios
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Install cocoapods
-        run: gem install cocoapods
-
-      - name: Tauri iOS init
-        run: pnpm tauri ios init --ci
-
-      - name: Build unsigned IPA
-        env:
-          APPLE_DEVELOPMENT_TEAM: DUMMY
-        run: pnpm tauri ios build --export-method debugging
-
-      - name: Upload IPA
-        uses: actions/upload-artifact@v4
-        with:
-          name: HGhub-ipa-v1.2.0
-          path: src-tauri/gen/apple/build/arm64/HGhub.ipa
